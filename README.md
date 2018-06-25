@@ -1,1 +1,2 @@
-# Optimal-stopping-time-for-a-Brownian-bridge
+# Optimal stopping time for a Brownian bridge
+
