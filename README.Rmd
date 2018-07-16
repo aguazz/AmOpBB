@@ -2,9 +2,9 @@
 output: mk_document
 ---
 
-```{r, echo = FALSE}
+```{r echo = FALSE}
 library(knitr)
-libraty(rmarkdown)
+library(rmarkdown)
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.path = "README/README-"
@@ -30,7 +30,7 @@ We stored the code into several scripts, each one adressing a specific topic.
 
 This file hosts two functions, both of them can be used basically to simulate Brownian bridges.
 
-```{r echo = FALSE}
+```{r, echo = FALSE, include = FALSE}
 source("https://github.com/aguazz/Optimal-stopping-time-for-a-Brownian-bridge/blob/master/0-BB_simulations.R")
 ```
 
