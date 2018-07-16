@@ -8,6 +8,15 @@ This repository is meant to support the unpublished paper (cite). Its ultimately
 1. To compute the optimal boundary of the optimal stopping problem that considers a Brownian bridge with some volatility as the underling process, and the identity as the gain function.
 2. To estimate the volatility of the Brownian bridge based on its evolution, and the use that estimation to build point-wise confidence function for the optimal boundary.
 
-Alongside, for the sake of reproducibility, we provide the simulation tools used in (cite) to carry out its propoused simulation study
+Alongside, for the sake of reproducibility, we provide the simulation tools used in (cite) to carry out its propoused simulation study.
 
 ## Details
+
+We stored the code into several scripts, each one adressing a specific topic. 
+
+### 0-BB_simulations
+
+This file hosts two functions, both of them can be used basically to simulate Brownian bridges. The former details are in (cite help)
+ 
+
+## Reproducibility
