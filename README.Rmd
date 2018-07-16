@@ -1,5 +1,5 @@
 ---
-output: github_document
+output: mk_document
 ---
 
 ```{r, echo = FALSE}
@@ -28,7 +28,13 @@ We stored the code into several scripts, each one adressing a specific topic.
 
 ### 0-BB_simulations
 
-This file hosts two functions, both of them can be used basically to simulate Brownian bridges. The former details are in (cite help)
+This file hosts two functions, both of them can be used basically to simulate Brownian bridges.
+
+```r{echo = FALSE}
+source("https://github.com/aguazz/Optimal-stopping-time-for-a-Brownian-bridge/blob/master/0-BB_simulations.R")
+```
+
+
  
 
 ## Reproducibility
