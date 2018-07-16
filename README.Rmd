@@ -3,4 +3,9 @@
 
 ## Forewords
 
-This software is meant to compute the optimal stopping boundary for a Brownian bridge as the underlying process and the identity as the gain function.
+This software is meant to support the unpublished paper (cite). Its ultimately purpose is:
+
+1. To compute the optimal boundary of the optimal stopping problem that considers a Brownian bridge with some volatility as the underling process, and the identity as the gain function.
+2.
+
+to compute the optimal stopping boundary for a Brownian bridge as the underlying process and the identity as the gain function.
