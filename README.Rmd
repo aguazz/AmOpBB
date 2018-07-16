@@ -3,9 +3,11 @@
 
 ## Forewords
 
-This software is meant to support the unpublished paper (cite). Its ultimately purpose is:
+This repository is meant to support the unpublished paper (cite). Its ultimately purpose is:
 
 1. To compute the optimal boundary of the optimal stopping problem that considers a Brownian bridge with some volatility as the underling process, and the identity as the gain function.
-2.
+2. To estimate the volatility of the Brownian bridge based on its evolution, and the use that estimation to build point-wise confidence function for the optimal boundary.
 
-to compute the optimal stopping boundary for a Brownian bridge as the underlying process and the identity as the gain function.
+Alongside, for the sake of reproducibility, we provide the simulation tools used in (cite) to carry out its propoused simulation study
+
+## Details
