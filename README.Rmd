@@ -1,2 +1,6 @@
 
 # Optimal stopping time for a Brownian Bridge
+
+## Forewords
+
+This software is meant to compute the optimal stopping boundary for a Brownian bridge as the underlying process and the identity as the gain function.
