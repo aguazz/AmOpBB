@@ -1,16 +1,19 @@
 ###### bBB - boundary computation ######
-## This function computes n optimal boundaries of BBs 
-## ending at X_T = S with volatilities given by the vector sigma.
-## * discount: TRUE
-## * The gain function is g(x) = x 
-## * [0, T] can be discretized: 
-##     (1) in N + 1 points corresponding to the times Delta * i, 
+## Implementation of Algorithm 1 from the paper 
+## "Optimal exercise of American options under stock pinning".
+## Computes the n optimal boundaries of the discounted OSPs defined by
+## Brownian bridges ending at X_T = S with volatilities given by the vector sigma
+## as the underlying processes, and the gain fucntion g(x) = (S - x)^+.
+## * r: discount rate (r >= 0)
+## * T, N, t: [0, T] can be discretized: 
+##     (1) using N + 1 points corresponding to the times Delta * i, 
 ##         with Delta = T / N and i = 0, 1, ...., N.
 ##     (2) or simply acording to t if it is provided.
 ## * Kernel: is a function that takes two real vectors "t" and "bt" and 
-##   two matrix "t_u" and "bt_u", and return a matrix which (i, j)th element
-##   is K(t[i], bt[i], t_u[i, j], bt_u[i, j]), 
-##   where K is the kernel of the Volterra integral equation characterizing the boundary
+##   two matrix "t_u" and "bt_u", and return a matrix which (i, j)-th element
+##   is K(t[i], bt[i], t_u[i, j], bt_u[i, j]), where K is the kernel of 
+##   Voletrra integral equation characterizing the OSB
+## * tol: error threshold of the fix point algorithm
 b_BB_AmPut <- function (tol = 1e-3, S = 0, sigma = 1, T = 1, N = 2e2, t = NULL, 
                     r = 0.5, Kernel = BB_I_K) {
   
@@ -63,7 +66,7 @@ b_BB_AmPut <- function (tol = 1e-3, S = 0, sigma = 1, T = 1, N = 2e2, t = NULL,
       # Relative error
       e <- max( abs((bnd[, i] - bnd_old) / bnd[, i]) ) 
       # Caution: the while will keep running until all errors associated to 
-      # each of the sigma's are smaller than the tolerange
+      # each of the sigma's are smaller than the tolerance
 
       # Update
       bnd_old <- bnd[, i]
@@ -103,78 +106,15 @@ BB_I_K <- function(t, x, t_u, bt_u, S, T, sigma, r){
 ###### Test ######
 # Settings
 # T <- 1        # expiration date
-# S <- 10        # expiration price
+# S <- 10       # strike price
 # r <- 0        # discount rate
 # sigma <- .01  # volatility
 # N <- 200      # number of points (N + 1) used to discretize the interval [0, T]
 
-# Efficiency
-# require(microbenchmark)
-# microbenchmark(bBB(y = y, sigma = sigma, T = T, N = N), times = 100)
-
 # Efect of the partition on the boundary computation
 # t <- seq(0, T, by = T / N)
-# t <- log10(seq(10^0, 10^1, l = N))
 # t <- log(seq(exp(0), exp(1), l = N))
 # boundary <- drop(b_BB_AmPut(S = S, sigma = sigma, t = t, r = r))
-# boundary.true <- S - 0.8399 * sigma * sqrt(T - t)
+# boundary.true <- S - 0.8399 * sigma * sqrt(T - t) # TRUE boundary for r = 0
 # plot(t, boundary, type = "l")
 # lines(t, boundary.true, lty = 1, col = "red")
- 
-# Some BB simulations
-# source(file = "0-BB_simulations.R")
-# BBs <- rBB(n = 3, a = y, b = y, sigma = sigma, t = t)
-
-# Covert "." into "*"
-# yy <- strsplit(as.character(y), split = "")[[1]]
-# if(any(yy == ".")) yy[which(yy == ".")] <- "*"
-# yy <- paste(yy, collapse = "")
-
-# rr <- strsplit(as.character(r), split = "")[[1]]
-# if(any(rr == ".")) rr[which(rr == ".")] <- "*"
-# rr <- paste(rr, collapse = "")
-
-# ss <- strsplit(as.character(sigma), split = "")[[1]]
-# if(any(ss == ".")) ss[which(ss == ".")] <- "*"
-# ss <- paste(ss, collapse = "")
-
-# Plot zone
-# if(FigGen == TRUE) pdf(paste("boundary_BB_y", yy, "_r", rr, "_sigma", ss, ".pdf", sep = ""))
-
-# matplot(t, t(BBs), type = "l", lty = 1.5, xlab = "Time", 
-#         ylab = "Boundary", 
-#         ylim = c(min(BBs, boundary), max(rbind(BBs, boundary))),
-#         bty = "n", col = c("blue", "red", "green"))
-# matlines(t, exp(-r * t) * t(BBs), lty = 2, lwd = 0.75, col = c("blue", "red", "green"))
-# lines(t, boundary, lty = 1, lwd = 2.5, col = "red")
-# lines(c(0, 1), c(y, y), lty = 2)
-# title(main = "Bb | G(x) = x", line = 1.4, cex.main = 0.8)
-# mtext(side = 3, line = -2.1, 
-#       text = paste("                                y =", y), adj = 0, outer = T, cex = 0.8) 
-# mtext(side = 3, line = -3, 
-#       text = paste("                                r =", r), adj = 0, outer = T, cex = 0.8) 
-# mtext(side = 3, line = -3.9, 
-#       text = paste("                         sigma =", sigma), adj = 0, outer = T, cex = 0.8, col = "red") 
-
-# if (FigGen == TRUE) dev.off()
-
-#### Discounted process
-
-# if(FigGen == TRUE) pdf(paste("boundary_BB_y", yy, "_r", rr, "_sigma", ss, "_discounted.pdf", sep = ""))
-
-# matplot(t, exp(-r * t) * t(BBs), type = "l", lty = 1, xlab = "Time", 
-#         ylab = "Boundary", ylim = c(min(BBs, boundary), max(rbind(BBs, boundary))),
-#         bty = "n")
-# lines(t, boundary, lty = 1, lwd = 2, col = "red")
-# lines(c(0, 1), c(y, y), lty = 2)
-# title(main = "Bb | G(x) = x (discounted process)", line = 1.4, cex.main = 0.8)
-# mtext(side = 3, line = -2.1, 
-#       text = paste("                                y =", y), adj = 0, outer = T, cex = 0.8) 
-# mtext(side = 3, line = -3, 
-#       text = paste("                                r =", r), adj = 0, outer = T, cex = 0.8) 
-# mtext(side = 3, line = -3.9, 
-#       text = paste("                         sigma =", sigma), adj = 0, outer = T, cex = 0.8, col = "red") 
-
-# if (FigGen == TRUE) dev.off()
-
-

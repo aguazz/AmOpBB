@@ -1,10 +1,15 @@
+#### Parallel MLE for the volatility of Brownian bridges ###
 ## Inputs:
-# samp  - a matrix whose rows are Brownian bridge's paths, not necessarily with the same volatility
-# N1    - an index between 1 and ncol(samp)
-# T     - t horizon
-# t     - discretization of the interval [0, T] where the Brownian bridges were sampled
+# * same: matrix whose rows are Brownian bridge's paths, not necessarily 
+#   with the same volatility
+# * N1: an index between 1 and ncol(samp), such that the first N1 observations
+#   will feed the MLE algorithm
+# * T: finite horizon
+# * t: discretization of the interval [0, T] 
+#   where the Brownian bridges were sampled
 ## Output:
-# A vector whose i-th entry is the volatility estimated for the Brownian bridge at the i-th row of \texttt{samp}
+# A vector whose i-th entry is the volatility estimated for the 
+# Brownian bridge at the i-th row of samp by using its first N1 observations
 SigMl <- function(samp, T = 1, t = NULL, N1 = 2) {
   
   N <- ncol(samp) - 1
@@ -38,8 +43,6 @@ SigMl <- function(samp, T = 1, t = NULL, N1 = 2) {
 }
 
 ###### Test ######
-# a <- 0        # strike price
-# y <- 0        # expiration price
 # T <- 1        # expiration date
 # sigma <- 1    # volatility
 # N <- 2e2      # number of points (N + 1) used to discretize the interval [0, T]
@@ -47,16 +50,32 @@ SigMl <- function(samp, T = 1, t = NULL, N1 = 2) {
 # set.seed(43)
 # n <- 5
 
-# samp <- rBB(n = n, a = a, b = y, N = N, T = T, sigma = 1)
-# Sigma <- SigMl(samp = samp, T = T)
+# samp <- rBB(n = n, a = a, b = y, N = N, T = T, sigma = sigma)
+# Sigma <- mapply(function(i) SigMl(samp = samp, T = T, N1 = i), 2:N)
 
 # require(latex2exp)
-# matplot(1:(N - 1), t(Sigma), type = "l", lty = 1, lwd = 1, col = "black", xlab = TeX("Sample size k"), ylab = "Estimation")
+# matplot(1:(N - 1), t(Sigma), type = "l", lty = 1, lwd = 1, col = "black", 
+#         xlab = TeX("Sample size n"), ylab = "Estimation")
 # lines(1:(N - 1),rep(sigma, N-1), lty = 2, lwd = 3, col = "black")
-# legend("topright", legend = c(TeX("$\\widehat{\\sigma}_{k, N}$"), TeX("$\\sigma = 1$")), lty = c(1,2), lwd = c(1,3), bty = "n")
+# legend("topright", legend = c(TeX("$\\widehat{\\sigma}_{n}$"), 
+#                               TeX("$\\sigma = 1$")),
+#        lty = c(1,2), lwd = c(1,3), bty = "n")
 
-## Computes the confidence function (at level alpha) for the boundary...
-## ...in case sigma was estimated via maximum likelihood.
+
+#### Pointwise confidence curves for the OSBs ###
+## Inputs:
+# * bnd: Numerical approximation of OSBs formated as the output 
+#   of the function b_BB_AmPut
+# * tol, S, sigma, r, T, N, t: settings used to compute bnd
+# * nsamp: sample sized used to estimated the volatility of the underlying BBs
+# * alpha: 100*(1-alpha) is the confidence level
+# * eps: increment used to compute the difference quotient 
+#   (bnd(sigma + eps) - bnd(sigma)) / eps explained in Subsection 4.3 from the
+#   paper "Optimal exercise of American options under stock pinning".
+## Output: A list with 3 elements:
+#           * bBB (= bnd): boudnary approximation vía Algorithm 1
+#           * bBB.low: lower confidence curve
+#           * bBB.up: Upper confidence curve
 b_BB_AmPut_Conf <- function(bnd, tol = 1e-3, S = 0, sigma = 1, r = 0.5, 
                             T = 1, N = 1e2, t = NULL, nsamp, 
                             alpha = 0.05, eps = 1e-2) {
@@ -102,15 +121,16 @@ b_BB_AmPut_Conf <- function(bnd, tol = 1e-3, S = 0, sigma = 1, r = 0.5,
 # N <- 200
 # T <- 1
 # a <- 0
-# y <- 0
+# S <- 0
 # t <- seq(0, T, by = T / N)
 
-# samp <- rBB(n = n, N = N, a = 0, b = y, sigma = 1)
+# samp <- rBB(n = n, N = N, a = 0, b = S, sigma = 1)
 # N1 <- floor(N/3)
 # Sigma <- SigMl(samp = samp, T = T, N1 = N1)
-# boundary <- b_BB_AmPut(y = y, sigma = drop(Sigma), T = T, N = N)
-# boundary <- b_BB_AmPut_Conf(bnd = boundary, y = y, 
+# boundary <- b_BB_AmPut(S = S, sigma = drop(Sigma), T = T, N = N)
+# boundary <- b_BB_AmPut_Conf(bnd = boundary, S = S, 
 #             sigma = drop(Sigma), T = T, N = N, nsamp = N1, alpha = alpha)
+# boundary.true <- S - 0.8399 * sigma * sqrt(T - t) # TRUE boundary for r = 0
 # plot(t, samp, type = "n", xlab = "", ylab = "", 
 #      ylim = c(min(samp, boundary$bBB.low[N1]), 0.75), xlim = c(0,1), 
 #      bty = "n", yaxt = "n", xaxt = "n")
@@ -125,8 +145,8 @@ b_BB_AmPut_Conf <- function(bnd, tol = 1e-3, S = 0, sigma = 1, r = 0.5,
 # axis(2, at = c(-0.4, 0, 0.4, 0.8), labels = c("-0.4", "0", "0.4", "0.8"), padj = 1)
 # legend(x = 0.001, y = 0.88, 
 #        legend = c(TeX("$b_{\\sigma}$"), 
-#                   TeX("$\\tilde{b}_{\\widehat{\\sigma}_{k,N}}$"), 
-#                   TeX("$\\tilde{c}_{1, \\widehat{\\sigma}_{k, N}}$"), 
-#                   TeX("$\\tilde{c}_{2, \\widehat{\\sigma}_{k, N}}$")), 
+#                   TeX("$\\tilde{b}_{\\widehat{\\sigma}_{n}}$"), 
+#                   TeX("$\\tilde{c}_{1, \\widehat{\\sigma}_{n}}$"), 
+#                   TeX("$\\tilde{c}_{2, \\widehat{\\sigma}_{n}}$")), 
 #        lty = c(1, 1, 1, 1), lwd = c(1, 1 ,1, 1), 
 #        col = c("red", "blue", "orange", "green"), bty = "n")

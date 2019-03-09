@@ -1,5 +1,5 @@
 ## FirstGreater (Auxiliary Function)
-# Given two matrix A and B of size n x m, this function returns 
+# Given two matrices A and B of size n x m, this function returns 
 # a vector of length n with element i equal to
 # min(A[i, j] : A[i, j] >= B[i, j], j = 1,...,m), i = 1,...,n.
 FirstLower <- function(A, B) {
@@ -15,34 +15,42 @@ FirstLower <- function(A, B) {
 }
 
 ## Test
-# (A <- rbind(c(2,4,8,16), c(1,3,9,27)))
-# (B <- rbind(c(3, 5, 7, 12), c(5, 13, 17, 23)))
-# FirstGreater(A, B)
+# (A <- rbind(c(4, 6, 4, 16), c(3, 2, 21, 27)))
+# (B <- rbind(c(3, 5, 7, 12), c(1, 13, 17, 23)))
+# FirstLower(A, B)
 
-##
+## Data generator ##
 # This function generates the data needed to compare the three 
 # possible stopping strategies (estimated boundary and confidence functions)
 # against each other and the one associated to the true boundary 
 # b(t) = S - B * sigma * sqrt(T - t).
 # INPUTS:
-# boundary computation setup: tol, a, S, sigma (NOTE: r = 0 for b_0 = S - B * sigma * sqrt(T - t))
+# * tol: tolerance for the fixed point algorithm inside the function b_BB_AmPut
+# * sigma: volatility of the BB's paths
+# * r: discount rate (NOTE: THe true boundary is only available for r = 0)
 # confidence functions setup: alpha, eps
-# where to compare: q - quantiles for the marginal distributions
-#                   t, T, N - process' partition
-#                   t.profit - partition where the profits are are going to be computed
-#                   t.boundary <- partition where the OSB is going to be originially 
-#                   (before the spline interpolation) computed over
-# number of BB's paths: n
+# * n: Number of BBs paths
+# * a: Initial condition X_0 = a
+# * S: Final condition X_T = S
+# * q: quantiles levels of the marginal distributions of a BB with sigma volatility
+# * T, N, t: Profits will be computed at the discretization of [0, T]: 
+#     (1) using N + 1 points corresponding to the times Delta * i, 
+#         with Delta = T / N and i = 0, 1, ...., N.
+#     (2) or simply acording to t if it is provided.
+# * t.boundary: partition where the OSB is going to be originially 
+#   (before the spline interpolation) computed over
+# * eps: increment length for the function b_BB_AmPu_Conf
+# * ratio (natural number): determines how many observations of a BB path are 
+#   between two consecutive points of t.
+# For more details see Subsection 4.4 of the paper 
+# "Optimal exercise of American options under stock pinning".
 # OUTPUT:
 # four arrays V.true, V.est, V.low and V.up,
 # of dimensions n, length(t), length(q).
 # each array stands for one stopping strategy, and its (i, j, k) entry
-# indicates the i-th observation of the payoff associated 
-# to the current stopping strategy, with initial condition (t(j), q(k))
+# indicates the i-th observation of the payoff of the 
+# corresponding stopping strategy, associeted to initial conditions (t(j), q(k))
 # and having estimated the volatility with the path from t(0) to t(j - 1)
-# Warning!!!: t.partition and t must be such that:
-#             * ratio := N[i] %% N.profit == 0 (Checked wtihin the code)
-#             * t.profit[i] = t[ratio * i]
 Profit <- function(q = c(0.2, 0.4, 0.6, 0.8), tol = 1e-3, n = 1e3, 
                      a = 10, S = 10, sigma = 1, r = 0, T = 1, N = 2e2,
                      t = NULL, ratio = 1, t.boundary = NULL, alpha = 0.05, eps = 1e-2) {

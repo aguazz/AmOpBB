@@ -1,17 +1,8 @@
-## FigGen = TRUE is for generating the figures in the current path
+# FigGen = TRUE is for generating the figures in the current path
 # FigGen = FALSE makes the images show up in the plot zone
-FigGen <- TRUE
-
-## Compile C++ functions
-
-# library(Rcpp)
-# library(RcppArmadillo)
-# Sys.setenv("PKG_CXXFLAGS" = "-std=c++11") # Needs C++11
-
-#Rcpp::sourceCpp('1-boundary_computation.cpp')
+FigGen <- FALSE
 
 ## Load R functions
-
 source("0-simulations.R")
 source("1-boundary_computation_BB-AmPut_discount.R")
 source("2-inference_BB.R")
@@ -33,43 +24,7 @@ t <- seq(0, T, by = h)  # discretization of the interval [0, T]
 boundary.true <- S - sigma * 0.8399 * sqrt(T - t)
 
 ###### Figures ######
-## Figure 0: Brownian bridges
-# n <- 3
-# set.seed(89)
-# BBs <- rBB(n = n, a = a, b = y, T = T, N = 400)
-# t.line400 <- seq(0, T, by = T / 400)
-
-# if(FigGen == TRUE) {
-#   pdf("BB.pdf", width = 7.5, height = 5)
-#   par( mfrow=c(1,1), mai=c(0.25, 0.25, 0.25,0.25), pin=c(6.8, 4.1), fin=c(7.5, 5), tcl=-0.3)
-# }
-
-# matplot(t.line400, t(BBs), type = "l", lty = 1, lwd = 1.5, bty="n", yaxt='n', ylab = "", xlab = "", xaxt='n', ylim = c(-1,1))
-# axis(1, at = c(0, 0.5, 1), labels = c("0", "0.5", "1"), padj = -0.75)
-# axis(2, at = c(-1, -0.5, 0, 0.5, 1), labels = TeX(c("-1","-0.5", "0", "0.5", "1")), padj = 0.3)
-
-# if (FigGen == TRUE) dev.off()
-
 ## Figure 1:
-## Asset's evolution
-# set.seed(55)
-# n <- 1
-# samp <- rBB(n = n, N = N, b = 0.25)
-
-# if(FigGen == TRUE) {
-#   pdf("asset_evol.pdf", width = 6, height = 3)
-#   par( mfrow=c(1,1), mai=c(0.25, 0.25, 0.25,0.25), pin=c(5.3, 2.3), fin=c(6, 3), tcl=-0.3)
-# }
-
-# matplot(t, t(samp), type = "l", lty = 1, bty="n", yaxt='n', xaxt='n', ylab = "", xlab = "")
-# axis(1, at = c(0, 1), labels = TeX(c("$t$","$T$")), padj = -0.5, line = 0.3)
-# axis(1, at = c(0.5), labels = TeX("$\\rightarrow s$"), tick = F, padj = -0.5, line = 0.3)
-# axis(2, at = c(-0.3,0,0.5), labels = TeX(c("","$x$","")), padj = 1)
-# title(main = "Asset evolution", line = 0.5, cex.main = 0.8)
-
-# if(FigGen == TRUE) dev.off()
-
-## Figure 2:
 ## Stopping/Continuation set
 T <- 1        # expiration date
 sigma <- 1    # volatility
@@ -117,17 +72,15 @@ axis(1, at = c(0, t[ost], 1), labels = TeX(c("$t$", "$\\tau^{*}$","$T$")), padj 
 points(0.89, 0.9, pch = "D")
 points(0.6, 0.15, pch = "C")
 axis(2, at = c(min(samp),0,max(samp)), labels = TeX(c("","$x$","")), padj = 1, line = -0.4)
-# title(main = "Optimal Stopping Boundary (OSB)", line = 0.5, cex.main = 0.8)
 
 if (FigGen == TRUE) dev.off()
 
-## Figure 3:
+## Figure 2:
 ## bBB performance (Log-time)
 T <- 1        # expiration date
 sigma <- 1    # volatility
 S <- 10       # strike price
 
-t20GL <- c(sort(sphunif:::Gauss_Legendre_nodes(a = 0, b = T, N = 20)), T)
 t20 <- log(seq(exp(0), exp(1), l = 21))
 t50 <- log(seq(exp(0), exp(1), l = 51))
 t100 <- log(seq(exp(0), exp(1), l = 101))
@@ -174,7 +127,6 @@ lines(c(0, 1), c(S, S), lty = 3)
 axis(1, at = c(0, 0.5, 1), labels = TeX(c("0", "0.5", "1")), padj = -0.8)
 axis(2, at = c(9, 9.5, 10, 10.2), labels = c("9", "9.5", "10", ""), padj = 1)
 rug(t50, ticksize = 0.05)
-# legend("bottomright", legend = c(TeX("$b$"), TeX("$\\tilde{b}$")), lty = c(1, 1), lwd = c(3, 1.5), bty = "n", col = c("red", "blue"), cex = 1.5)
 
 if (FigGen == TRUE) dev.off()
 
@@ -192,7 +144,6 @@ lines(c(0, 1), c(S, S), lty = 3)
 axis(1, at = c(0, 0.5, 1), labels = TeX(c("0", "0.5", "1")), padj = -0.8)
 axis(2, at = c(9, 9.5, 10, 10.2), labels = c("9", "9.5", "10", ""), padj = 1)
 rug(t100, ticksize = 0.05)
-# legend("bottomright", legend = c(TeX("$b$"), TeX("$\\tilde{b}$")), lty = c(1, 1), lwd = c(3, 1.5), bty = "n", col = c("red", "blue"), cex = 1.5)
 
 if (FigGen == TRUE) dev.off()
 
@@ -210,37 +161,10 @@ lines(c(0, 1), c(S, S), lty = 3)
 axis(1, at = c(0, 0.5, 1), labels = TeX(c("0", "0.5", "1")), padj = -0.8)
 axis(2, at = c(9, 9.5, 10, 10.2), labels = c("9", "9.5", "10", ""), padj = 1)
 rug(t200, ticksize = 0.05)
-# legend("bottomright", legend = c(TeX("$b$"), TeX("$\\tilde{b}$")), lty = c(1, 1), lwd = c(3, 1.5), bty = "n", col = c("red", "blue"), cex = 1.5)
 
 if (FigGen == TRUE) dev.off()
 
-
-## Figure 4:
-## MLE for the volatility based on the sample size using n BB paths
-# set.seed(43) # ... forcing beauty
-# n <- 5
-# N <- 200
-
-# samp <- rBB(n = n, N = N, a = S, b = S, sigma = 1)
-
-# Sigma <- sapply(2:N, function(x) SigMl(samp = samp, N1 = x, T = T))
-
-#  if(FigGen == TRUE) {
-#    pdf("vol_est.pdf", width = 8.5, height = 5.5)
-#    par( mfrow=c(1, 1), mai=c(0.25, 0.25, 0.25, 0.25), pin=c(6.7, 3.8), fin=c(8.5, 5.5), tcl = -0.3, cex.axis = 1.2, cex.lab = 0.8)
-#  }
-
-#  matplot(1:(N - 1), t(Sigma), type = "l", lty = 1, lwd = 1.5, col = "blue", xlab = "", ylab = "", bty="n", yaxt = "n", xaxt = "n")
-#  lines(1:(N - 1),rep(sigma, N-1), lty = 2, lwd = 3, col = "red")
-#  axis(1, at = c(0, 100, 200), labels = c("0", "100", "200"), padj = 0)
-#  axis(2, at = c(0.25, 1, 3), labels = c("", "1", "3"), padj = 0)
-#  legend(x = 155, y = 3.25, legend = c(TeX("$\\widehat{\\sigma}_{n}$"), TeX("$\\sigma = 1$")), lty = c(1,2), lwd = c(1.5,2), col = c("blue", "red"), bty = "n", cex = 1.4)
-#  title(xlab = TeX("Sample size $n$"), line = 2.9, cex.lab = 1.2)
-#  title(ylab = TeX("Volatility estimation $\\widehat{\\sigma}_{n}$"), line = 2.6, cex.lab = 1.2)
-  
-#  if (FigGen == TRUE) dev.off()
-
-## Figure 5:
+## Figure 3:
 ## Inferring the boundary (including the confidence functions) using
 ## the first N1 observations of the path 
 set.seed(49) # ... forcing beauty
@@ -296,7 +220,104 @@ legend(x = 0.81, y = 9.46, legend = c(TeX("$b_{\\sigma}$"),
 
 if (FigGen == TRUE) dev.off()
 
-## Figure 6:
+## Figure 4
+## Empirical validation of the confidence functions
+## by showing the sample proportion of inclusion of the true boundary.
+# settings
+a <- 10   # initial value
+S <- 10   # strike price
+sigma <- 1 # volatility
+T <- 1     # expiration date
+N <- 5e2   # number of subintervals of the interval [0, T]
+
+
+n <- 1000 # number of BB paths
+alpha <- 0.05 # confidence level
+nalpha <- length(alpha)
+# Number of points for the sigma estimation.
+N1 <- floor(N/3) 
+N2 <- 2 * floor(N/3)
+
+# CI (with confidence level of 0.05) for the proportion of contentions of the boundary
+# within the confidence curves
+up.bound <- alpha + qnorm(1 - 0.05/2, mean = 0, 
+                          sd = sqrt(alpha * (1 - alpha) / n)) 
+low.bound <- alpha - qnorm(1 - 0.05/2, mean = 0, 
+                           sd = sqrt(alpha * (1 - alpha) / n))
+
+set.seed(234)
+# BB paths
+samp <- rBB(n = n, a = a, b = S, sigma = sigma, T = 1, N = N)  
+
+Sigma1 <- drop(SigMl(samp = samp, T = T, N1 = N1))
+Sigma2 <- drop(SigMl(samp = samp, T = T, N1 = N2))
+
+# Defining logarithmic partition
+tlog <- log(seq(exp(0), exp(1), l = N + 1))
+
+# true boundary at the logarithmic partition
+boundary.true <- S - 0.8399 * sigma * sqrt(T - tlog)
+
+# Generate the boundary and confidence functions...
+# boundary1 <- b_BB_AmPut(S = S, sigma = Sigma1, t = tlog, r = 0)
+# boundary1 <- b_BB_AmPut_Conf(bnd = boundary1, S = S, sigma = Sigma1, 
+#                              t = tlog, nsamp = N1, alpha = alpha, r = 0)
+
+# boundary2 <- b_BB_AmPut(S = S, sigma = Sigma2, t = tlog, r = 0)
+# boundary2 <- b_BB_AmPut_Conf(bnd = boundary2, S = S, sigma = Sigma2, 
+#                              t = tlog, nsamp = N2, alpha = alpha, r = 0)
+
+# Estimated proportion of successes (boundary within the confidence interval (pointwise))
+# Prop1 <- rowMeans( t(boundary1$bBB.low) <= boundary.true & t(boundary1$bBB.up) >= boundary.true )
+# Prop2 <- rowMeans( t(boundary2$bBB.low) <= boundary.true & t(boundary2$bBB.up) >= boundary.true )
+
+# Save the data
+# save(Prop1, file = "Prop1.RData")
+# save(Prop2, file = "Prop2.RData")
+# ... or load it 
+# Load the data: proportions of inclusions
+load(file = "Prop1.RData")
+load(file = "Prop2.RData")
+
+alpha_after_dot <- strsplit(as.character(alpha), "")[[1]]
+alpha_after_dot <- alpha_after_dot[(which(alpha_after_dot == ".") + 1):length(alpha_after_dot)]
+alpha_after_dot <- paste(alpha_after_dot, collapse = "")
+
+# Images 4.1 (N1)
+if(FigGen == TRUE) {
+  pdf(paste("confidence_1third_alpha", alpha_after_dot,".pdf", sep = ""), width = 5, height = 2.8)
+  par( mfrow=c(1, 1), mai=c(0.25, 0.25, 0.25, 0.25), pin=c(4.2, 2.2), fin=c(5, 2.8), tcl = -0.3, cex.axis = 1)
+}
+
+plot(tlog, rep(alpha, N + 1), type = "l", lty = 2, lwd = 3, ylim = c(0, 2 * alpha), ylab = "", xlab = "", bty = "n", yaxt = "n", xaxt = "n")
+lines(tlog[1:(N + 1)], 1 - Prop1[1:(N + 1)], lty = 1, lwd = 1.5)
+lines(c(0, T), rep(min(1, up.bound), 2), lty = 3, lwd = 2)
+lines(c(0, T), rep(max(0 , low.bound), 2), lty = 3, lwd = 2)
+axis(1, at = c(0, 0.5, 1), labels = c("0", "0.5", "1"), padj = -0.8)
+axis(2, at = c(0, alpha, 2*alpha), labels = c("0", as.character(alpha), as.character(2*alpha)), padj = 1)  
+title(xlab = TeX("Time"), line = 2, cex.lab = 1.2)
+title(ylab = TeX("Proportion of non containtion"), line = 2, cex.lab = 1.2)
+
+if (FigGen == TRUE) dev.off()
+
+# Images 4.2 (N2)
+if(FigGen == TRUE) {
+  pdf(paste("confidence_2third_alpha", alpha_after_dot,".pdf", sep = ""),  width = 5, height = 2.8)
+  par( mfrow=c(1, 1), mai=c(0.25, 0.25, 0.25, 0.25), pin=c(4.2, 2.2), fin=c(5, 2.8), tcl = -0.3, cex.axis = 1)
+}
+
+plot(tlog, rep(alpha, N + 1), type = "l", lty = 2, lwd = 3, ylim = c(0, 2 * alpha), ylab = "", xlab = "", bty = "n", yaxt = "n", xaxt = "n")
+lines(tlog[1:(N + 1)], 1 - Prop2[1:(N + 1)], lty = 1, lwd = 1.5)
+lines(c(0, T), rep(min(1, up.bound), 2), lty = 3, lwd = 2)
+lines(c(0, T), rep(max(0 , low.bound), 2), lty = 3, lwd = 2)
+axis(1, at = c(0, 0.5, 1), labels = c("0", "0.5", "1"), padj = -0.8)
+axis(2, at = c(0, alpha, 2*alpha), labels = c("0", as.character(alpha), as.character(2*alpha)), padj = 1)  
+title(xlab = TeX("Time"), line = 2.9, cex.lab = 1.2)
+title(ylab = TeX("Proportion of non containtion"), line = 2.6, cex.lab = 1.2)
+
+if (FigGen == TRUE) dev.off()
+
+## Figure 5:
 ## BB percentile paths
 a <- 10   # initial value
 S <- 10   # final price
@@ -357,11 +378,12 @@ axis(2, at = c(S -0.75, S, S + 0.75), labels = c("9.25", "10", "10.75"), padj = 
 
 if (FigGen == TRUE) dev.off()
 
-## Figure 7.1:
+## Figure 6.1:
 ## Mean (Sigma = 1)
 load(file = "payoff_N200_ratio1.RData")
-r <- 1
-T <- 1    # expiration date
+# load(file = "payoff_N200_ratio25.RData")
+r <- 1   # ratio used for the simulated data
+T <- 1   # expiration date
 N <- 2e2 # number of subintervals
 t <- seq(0, T, by = T / N)  # discrite partiton of the interval [0, T]
 x.axis <- t[-1]
@@ -401,7 +423,7 @@ for (k in 1:4) {
   
 }
 
-## Figure 7.2:
+## Figure 6.2:
 ## Variance (Sigma = 1)
 # colVars (Auxiliary function)
 colVars <- function(X){
@@ -437,101 +459,4 @@ for (k in 1:4) {
   if (FigGen == TRUE) dev.off()
   
 }
-
-## Figure 8
-## Empirical validation of the confidence functions
-## by showing the sample proportion of inclusion of the true boundary.
-# settings
-a <- 10   # initial value
-S <- 10   # strike price
-sigma <- 1 # volatility
-T <- 1     # expiration date
-N <- 5e2   # number of subintervals of the interval [0, T]
-
-
-n <- 1000 # number of BB paths
-alpha <- 0.05 # confidence level
-nalpha <- length(alpha)
-# Number of points for the sigma estimation.
-N1 <- floor(N/3) 
-N2 <- 2 * floor(N/3)
-
-# CI (with confidence level of 0.05) for the proportion of contentions of the boundary
-# within the confidence curves
-up.bound <- alpha + qnorm(1 - 0.05/2, mean = 0, 
-                          sd = sqrt(alpha * (1 - alpha) / n)) 
-low.bound <- alpha - qnorm(1 - 0.05/2, mean = 0, 
-                           sd = sqrt(alpha * (1 - alpha) / n))
-
-set.seed(234)
-# BB paths
-samp <- rBB(n = n, a = a, b = S, sigma = sigma, T = 1, N = N)  
-
-Sigma1 <- drop(SigMl(samp = samp, T = T, N1 = N1))
-Sigma2 <- drop(SigMl(samp = samp, T = T, N1 = N2))
-
-# Defining logarithmic partition
-tlog <- log(seq(exp(0), exp(1), l = N + 1))
-
-# true boundary at the logarithmic partition
-boundary.true <- S - 0.8399 * sigma * sqrt(T - tlog)
-
-# Generate the boundary and confidence functions...
-# boundary1 <- b_BB_AmPut(S = S, sigma = Sigma1, t = tlog, r = 0)
-# boundary1 <- b_BB_AmPut_Conf(bnd = boundary1, S = S, sigma = Sigma1, 
-#                              t = tlog, nsamp = N1, alpha = alpha, r = 0)
- 
-# boundary2 <- b_BB_AmPut(S = S, sigma = Sigma2, t = tlog, r = 0)
-# boundary2 <- b_BB_AmPut_Conf(bnd = boundary2, S = S, sigma = Sigma2, 
-#                              t = tlog, nsamp = N2, alpha = alpha, r = 0)
-
-# Estimated proportion of successes (boundary within the confidence interval (pointwise))
-# Prop1 <- rowMeans( t(boundary1$bBB.low) <= boundary.true & t(boundary1$bBB.up) >= boundary.true )
-# Prop2 <- rowMeans( t(boundary2$bBB.low) <= boundary.true & t(boundary2$bBB.up) >= boundary.true )
-
-# Save the data
-# save(Prop1, file = "Prop1.RData")
-# save(Prop2, file = "Prop2.RData")
-# ... or load it 
-load(file = "Prop1.RData")
-load(file = "Prop2.RData")
-
-alpha_after_dot <- strsplit(as.character(alpha), "")[[1]]
-alpha_after_dot <- alpha_after_dot[(which(alpha_after_dot == ".") + 1):length(alpha_after_dot)]
-alpha_after_dot <- paste(alpha_after_dot, collapse = "")
-
-# Images 8.1 (N1)
-  if(FigGen == TRUE) {
-    pdf(paste("confidence_1third_alpha", alpha_after_dot,".pdf", sep = ""), width = 5, height = 2.8)
-    par( mfrow=c(1, 1), mai=c(0.25, 0.25, 0.25, 0.25), pin=c(4.2, 2.2), fin=c(5, 2.8), tcl = -0.3, cex.axis = 1)
-  }
-    
-  plot(tlog, rep(alpha, N + 1), type = "l", lty = 2, lwd = 3, ylim = c(0, 2 * alpha), ylab = "", xlab = "", bty = "n", yaxt = "n", xaxt = "n")
-  lines(tlog[1:(N + 1)], 1 - Prop1[1:(N + 1)], lty = 1, lwd = 1.5)
-  lines(c(0, T), rep(min(1, up.bound), 2), lty = 3, lwd = 2)
-  lines(c(0, T), rep(max(0 , low.bound), 2), lty = 3, lwd = 2)
-  axis(1, at = c(0, 0.5, 1), labels = c("0", "0.5", "1"), padj = -0.8)
-  axis(2, at = c(0, alpha, 2*alpha), labels = c("0", as.character(alpha), as.character(2*alpha)), padj = 1)  
-  title(xlab = TeX("Time"), line = 2, cex.lab = 1.2)
-  title(ylab = TeX("Proportion of non containtion"), line = 2, cex.lab = 1.2)
-  
-  if (FigGen == TRUE) dev.off()
-    
-  # Images 8.2 (N2)
-  if(FigGen == TRUE) {
-    pdf(paste("confidence_2third_alpha", alpha_after_dot,".pdf", sep = ""),  width = 5, height = 2.8)
-    par( mfrow=c(1, 1), mai=c(0.25, 0.25, 0.25, 0.25), pin=c(4.2, 2.2), fin=c(5, 2.8), tcl = -0.3, cex.axis = 1)
-  }
-  
-  plot(tlog, rep(alpha, N + 1), type = "l", lty = 2, lwd = 3, ylim = c(0, 2 * alpha), ylab = "", xlab = "", bty = "n", yaxt = "n", xaxt = "n")
-  lines(tlog[1:(N + 1)], 1 - Prop2[1:(N + 1)], lty = 1, lwd = 1.5)
-  lines(c(0, T), rep(min(1, up.bound), 2), lty = 3, lwd = 2)
-  lines(c(0, T), rep(max(0 , low.bound), 2), lty = 3, lwd = 2)
-  axis(1, at = c(0, 0.5, 1), labels = c("0", "0.5", "1"), padj = -0.8)
-  axis(2, at = c(0, alpha, 2*alpha), labels = c("0", as.character(alpha), as.character(2*alpha)), padj = 1)  
-  title(xlab = TeX("Time"), line = 2.9, cex.lab = 1.2)
-  title(ylab = TeX("Proportion of non containtion"), line = 2.6, cex.lab = 1.2)
-  
-  if (FigGen == TRUE) dev.off()
-  
   
