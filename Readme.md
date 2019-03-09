@@ -1,38 +1,24 @@
----
-title: "Readme AmOpBB."
-author: "Abel Guada Azze"
-date: "March 6, 2019"
-header-includes:
-   - \usepackage[english]{babel}
-   - \selectlanguage{english}
-   - \usepackage[utf8]{inputenc}
-   - \usepackage{amsmath}
-   - \usepackage{ctable}
-output:
-  md_document:
-    variant: markdown_github
-geometry: margin=1in
----
 
 
 
 
-```{r echo=FALSE}
-# Needed packages
-# install.packages("rmarkdown")
-# install.packages("knitr")
-library(latex2exp)
-```
 
-# Description
+
+
+
+
+
+Description
+===========
 
 Software companion for the paper "Optimaly excercising American options under the stock pinning effect". It implements the proposed methods and allows to reproduced the simulation study carried out therein.
 
-# Usage example
+Usage example
+=============
 
-Despite the scripts are fairly commented and we provide test examples for each one of the functions, we display here an example that might be useful as it illustrates how to use most of the functions in a single shoot.  
+Despite the scripts are fairly commented and we provide test examples for each one of the functions, we display here an example that might be useful as it illustrates how to use most of the functions in a single shoot.
 
-```{r echo = TRUE, eval = TRUE}
+``` r
 source("0-simulations.R")
 source("1-boundary_computation_BB-AmPut_discount.R")
 source("2-inference_BB.R")
@@ -47,6 +33,11 @@ S <- 10       # Strike price
 t <- seq(0, T, by = 1/N)  # equally-spaced partition of the interval [0, T]
 alpha = 0.05  # confidence level
 samp <- rBB(n = 1, N = N, a = S, b = S, sigma = 1)
+```
+
+    ## Loading required package: mvtnorm
+
+``` r
 N1 <- floor(N / 3) # Cut point
 
 # Sigma estiamtion via MLE
@@ -89,7 +80,6 @@ legend(x = 0.81, y = 9.46, legend = c(TeX("$b_{\\sigma}$"),
                                  TeX("$\\tilde{c}_{2,\\widehat{\\sigma}_{n}}$")), 
        lty = c(1, 1, 1, 1), lwd = c(1, 1 , 1, 1), 
        col = c("red", "blue", "orange", "green"), cex = 0.75)
-
 ```
 
-
+![](Readme_files/figure-markdown_github/unnamed-chunk-2-1.png)
